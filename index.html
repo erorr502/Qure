@@ -1,0 +1,468 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Qure — Medication Galaxy</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e1a;--pn:#121828;--pn2:#182036;--bd:#25304d;--tx:#e6ebf7;--mu:#8b97b5;--ac:#3ddc97;--rd:#f43f5e;--gd:#22c55e;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root[data-theme=light]{--bg:#f4f6fb;--pn:#fff;--pn2:#eef1f8;--bd:#d8deec;--tx:#141b2e;--mu:#5d6985;--ac:#0f9d6e}
+*{box-sizing:border-box}html{height:100%}body{margin:0;min-height:100%;background:var(--bg);color:var(--tx);font:14px/1.5 "Plus Jakarta Sans",Manrope,Inter,system-ui,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p{margin:0}
+.app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+aside{background:var(--pn);border-right:1px solid var(--bd);padding:18px 12px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:6px}
+.logo{font-size:24px;font-weight:700;padding:0 8px}.logo i{color:var(--ac);font-style:normal}.sub{color:var(--mu);font-size:12px;padding:0 8px 14px}
+.lbl{font-size:11px;letter-spacing:.1em;color:var(--mu);padding:6px 8px}
+.nav{background:none;border:0;text-align:left;padding:9px 10px;border-radius:10px;color:var(--mu)}.nav:hover{background:var(--pn2)}.nav.on{background:var(--pn2);color:var(--ac);font-weight:600}
+.promo{margin-top:auto;background:var(--pn2);border:1px solid var(--bd);border-radius:14px;padding:12px;font-size:12px;color:var(--mu)}.promo b{color:var(--tx);font-size:14px;display:block}
+main{padding:16px 22px 40px;min-width:0}
+header{display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap}header .t{flex:1;min-width:140px}header small{color:var(--mu)}
+input,select{background:var(--pn);border:1px solid var(--bd);color:var(--tx);border-radius:10px;padding:8px 12px;font:inherit}
+.btn{background:var(--pn);border:1px solid var(--bd);border-radius:10px;padding:8px 14px}.btn:hover{border-color:var(--ac)}.pri{background:var(--ac);color:#04201c;border-color:var(--ac);font-weight:600}
+.card{background:var(--pn);border:1px solid var(--bd);border-radius:16px;padding:16px}
+.hero{background:linear-gradient(120deg,var(--pn2),var(--pn));margin-bottom:16px}.hero small{letter-spacing:.14em;color:var(--ac);font-size:11px}.hero h1{font-size:34px;margin:4px 0}.hero p{color:var(--mu);margin-bottom:12px}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:16px}.stat b{font-size:28px;display:block}.stat span{color:var(--mu);font-size:12px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chip{border:1px solid var(--bd);background:var(--pn2);border-radius:99px;padding:5px 12px;font-size:12px;display:inline-flex;gap:6px;align-items:center}.chip.off{opacity:.4}.chip i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.gal{position:relative;margin-bottom:16px}.gal canvas{width:100%;height:440px;display:block;background:radial-gradient(ellipse at center,#141b3a,#05070f);border-radius:14px;touch-action:none;cursor:grab}
+body[data-view=galaxy] .gal canvas{height:calc(100vh - 230px);min-height:520px}
+.zoom{position:absolute;left:12px;bottom:70px;display:flex;flex-direction:column;gap:6px}.zoom button{width:34px;height:34px;border-radius:10px;border:1px solid var(--bd);background:var(--pn)}
+.side{position:absolute;right:12px;top:60px;width:270px;max-width:calc(100% - 24px);max-height:calc(100% - 130px);overflow:auto;background:var(--pn);border:1px solid var(--bd);border-radius:14px;padding:14px;display:none;box-shadow:0 10px 40px #0008}.side.on{display:block}.side h3{font-size:18px}.side p,.side li{color:var(--mu);font-size:13px}.side ul{padding-left:16px;margin:6px 0}
+.x{float:right;background:none;border:0;font-size:18px}
+.warn{color:var(--rd);font-weight:600}.ok{color:var(--gd)}
+.two{display:grid;grid-template-columns:2fr 1fr;gap:12px}@media(max-width:900px){.app{grid-template-columns:1fr}aside{position:static;height:auto;flex-direction:row;flex-wrap:wrap}.promo{display:none}.two{grid-template-columns:1fr}}
+.feed div{padding:7px 0;border-bottom:1px solid var(--bd);font-size:13px}.feed small{color:var(--mu);display:block}
+.v{display:none}body[data-view=overview] .v-o,body[data-view=galaxy] .v-g,body[data-view=grover] .v-gr,body[data-view=patients] .v-p,body[data-view=reports] .v-r,body[data-view=settings] .v-s,body[data-view=library] .v-l,body[data-view=matrix] .v-m,body[data-view=saved] .v-sv{display:block}
+body[data-view=overview] .v-o.gal,body[data-view=galaxy] .v-g.gal{display:block}
+#chart{width:100%;height:200px;display:block;background:var(--pn2);border-radius:10px}
+.tgl{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--bd)}
+pre{background:var(--pn2);padding:12px;border-radius:10px;overflow:auto;max-height:240px;font-size:12px}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ac);color:#04201c;padding:10px 18px;border-radius:12px;font-weight:600;opacity:0;transition:.3s;pointer-events:none;z-index:50}#toast.on{opacity:1}
+.pop{position:absolute;right:22px;top:70px;width:280px;z-index:30;display:none}.pop.on{display:block}
+#chat{position:fixed;right:18px;bottom:18px;z-index:40}#chatbox{display:none;width:310px;height:380px;flex-direction:column;background:var(--pn);border:1px solid var(--bd);border-radius:16px;margin-bottom:10px;overflow:hidden}#chatbox.on{display:flex}#msgs{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:8px}.m{padding:8px 11px;border-radius:12px;max-width:85%;background:var(--pn2)}.m.u{align-self:flex-end;background:var(--ac);color:#04201c}
+.fab{border-radius:99px;background:var(--ac);color:#04201c;border:0;padding:11px 18px;font-weight:700;float:right}
+
+@property --a{syntax:"<angle>";inherits:false;initial-value:0deg}
+body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none;background:radial-gradient(40% 40% at 20% 20%,#5eead433,transparent),radial-gradient(35% 35% at 80% 30%,#a78bfa33,transparent),radial-gradient(40% 40% at 60% 85%,#f43f5e22,transparent);filter:blur(30px);animation:aur 18s ease-in-out infinite alternate}
+@keyframes aur{to{transform:translate(6%,4%) rotate(8deg) scale(1.15)}}
+.card,aside{background:color-mix(in srgb,var(--pn) 72%,transparent);backdrop-filter:blur(14px) saturate(1.4);position:relative;transition:transform .15s ease-out,border-color .3s,box-shadow .3s}
+.card::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),#5eead422,transparent 60%);opacity:0;transition:opacity .3s}
+.card:hover::after{opacity:1}.card:hover{border-color:#5eead466}
+.hero{overflow:hidden;border:1px solid transparent;background:linear-gradient(var(--pn),var(--pn)) padding-box,conic-gradient(from var(--a),#5eead4,#a78bfa,#f43f5e,#fbbf24,#5eead4) border-box;animation:spin 6s linear infinite}
+@keyframes spin{to{--a:360deg}}
+.hero h1{font-size:44px;background:linear-gradient(90deg,#5eead4,#a78bfa,#f43f5e,#5eead4);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shim 6s linear infinite}
+@keyframes shim{to{background-position:300% 0}}
+.v{animation:up .55s cubic-bezier(.2,.9,.3,1.2) both}@keyframes up{from{opacity:0;transform:translateY(22px) scale(.97);filter:blur(6px)}}
+.stat b{background:linear-gradient(90deg,var(--tx),var(--ac));-webkit-background-clip:text;background-clip:text;color:transparent}
+.nav{position:relative;overflow:hidden;transition:.25s}.nav:hover{transform:translateX(5px)}.nav.on{box-shadow:inset 3px 0 var(--ac),0 0 22px #5eead433}
+.btn{position:relative;overflow:hidden;transition:.2s}.btn:hover{transform:translateY(-2px);box-shadow:0 6px 22px #5eead433}.btn:active{transform:scale(.95)}
+.pri{background:linear-gradient(135deg,#3ddc97,#22b8a0)}
+.rip{position:absolute;border-radius:50%;background:#fff6;transform:scale(0);animation:rp .6s ease-out;pointer-events:none}@keyframes rp{to{transform:scale(4);opacity:0}}
+#glow{position:fixed;width:340px;height:340px;margin:-170px 0 0 -170px;border-radius:50%;pointer-events:none;z-index:60;background:radial-gradient(#5eead41f,transparent 65%);mix-blend-mode:screen}
+.dot{position:fixed;width:8px;height:8px;margin:-4px;border-radius:50%;pointer-events:none;z-index:61;background:var(--ac);box-shadow:0 0 12px var(--ac);transition:transform .15s}
+.tick{overflow:hidden;white-space:nowrap;border:1px solid var(--bd);border-radius:99px;margin-bottom:14px;font:11px ui-monospace,monospace;color:var(--ac);padding:6px 0;background:var(--pn)}
+.tick span{display:inline-block;padding-left:100%;animation:mq 38s linear infinite}@keyframes mq{to{transform:translateX(-100%)}}
+#pal{position:fixed;inset:0;background:#000a;backdrop-filter:blur(8px);z-index:90;display:none;align-items:flex-start;justify-content:center;padding-top:15vh}#pal.on{display:flex}
+#pal>div{width:min(520px,92vw);background:var(--pn);border:1px solid var(--ac);border-radius:16px;box-shadow:0 0 60px #5eead455;animation:up .3s both;overflow:hidden}
+#pal input{width:100%;border:0;border-bottom:1px solid var(--bd);border-radius:0;padding:16px;font-size:16px;outline:0}
+#pal li{list-style:none;padding:10px 16px;cursor:pointer}#pal li.f,#pal li:hover{background:var(--pn2);color:var(--ac)}#pal ul{margin:0;padding:0;max-height:300px;overflow:auto}
+kbd{border:1px solid var(--bd);border-radius:6px;padding:1px 6px;font-size:11px;color:var(--mu)}
+.cf{position:fixed;top:-10px;width:9px;height:14px;z-index:99;pointer-events:none;animation:fall 2.2s ease-in forwards}@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:.2}}
+#bc{background:var(--rd);color:#fff;border-radius:99px;padding:0 6px;font-size:11px;animation:pl 2s infinite}@keyframes pl{50%{box-shadow:0 0 0 6px #f43f5e33}}
+@media(prefers-reduced-motion:reduce){*,*::before{animation:none!important}}
+aside{background:var(--pn);backdrop-filter:none;overflow-y:auto;gap:4px;z-index:5}
+.nav{color:var(--tx);opacity:.85;padding:11px 12px;font-size:14px;white-space:nowrap;flex-shrink:0}.nav.on{opacity:1}
+@media(max-height:720px){.promo{display:none}}
+aside{background:var(--pn)!important;backdrop-filter:none!important;overflow-y:auto;gap:4px;z-index:5}
+.nav{color:var(--tx);padding:12px;font-size:14px;white-space:nowrap;flex-shrink:0}.nav.on{color:var(--ac)}
+@media(max-height:700px){.promo{display:none}}
+
+.gx{display:grid;gap:18px;align-items:start}.gcol{min-width:0}
+body[data-view=galaxy] .gx{grid-template-columns:minmax(0,1fr) 340px}@media(max-width:1100px){body[data-view=galaxy] .gx{grid-template-columns:1fr}}
+.gh{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}.gh h2{font-size:26px;letter-spacing:-.02em}.gh small{color:var(--mu)}
+.live{font-size:12px;color:var(--ac);display:flex;gap:7px;align-items:center;white-space:nowrap}.live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ac);box-shadow:0 0 8px var(--ac)}
+.gbox{background:#071210;border:1px solid #17352f;border-radius:20px;overflow:hidden;color:#dff5ee;box-shadow:0 24px 60px #0006}
+.gbar{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid #13302a}.gbar b{flex:1;font-size:16px}
+.gbar input{background:#0b1d1a;border-color:#1b3a34;color:#dff5ee;width:230px;max-width:40vw}
+.ib{width:38px;height:38px;border-radius:10px;border:1px solid #1b3a34;background:#0b1d1a;color:#9fd8c8;display:grid;place-items:center;padding:0}.ib:hover{border-color:var(--ac)}
+.cw{position:relative}
+.gal .cw canvas{width:100%;height:460px;border-radius:0;background:radial-gradient(ellipse at 50% 45%,#0f2d27aa,transparent 70%),linear-gradient(#ffffff08 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,#ffffff08 1px,transparent 1px) 0 0/44px 44px,#071210}
+body[data-view=galaxy] .gal .cw canvas{height:clamp(520px,calc(100vh - 340px),760px);min-height:0}
+.gbox:fullscreen .cw canvas{height:calc(100vh - 130px)!important}
+.ov{position:absolute;left:18px;font:11px ui-monospace,monospace;letter-spacing:.12em;color:#4f8a7c;pointer-events:none}
+.cw .zoom{left:auto;right:16px;bottom:16px}.cw .zoom button{background:#0b1d1a;border-color:#1b3a34;color:#bfeadd}
+.cw .side{background:#0b1d1aee;border-color:#1b3a34;color:#dff5ee}body[data-view=galaxy] .side{display:none!important}
+.glg{display:flex;gap:20px;align-items:center;padding:13px 18px;border-top:1px solid #13302a;font-size:12px;color:#9fd8c8;flex-wrap:wrap}
+.glg label{display:flex;gap:7px;align-items:center;cursor:pointer}.glg i{width:9px;height:9px;border-radius:50%}.glg input{accent-color:var(--ac)}.glg small{margin-left:auto}
+.kv{display:grid;grid-template-columns:repeat(3,auto);gap:10px 18px;justify-content:start;margin-top:12px}.kv small{color:var(--mu);display:block;font-size:11px}.kv b{font-size:14px}
+.pp.card{padding:0;position:sticky;top:16px}.pp>div{padding:18px 22px;border-bottom:1px solid var(--bd)}.pp>div:last-child{border:0}
+.pph{display:flex;justify-content:space-between;align-items:center}.pph h3{font-size:19px}
+.av{width:56px;height:56px;border-radius:50%;background:#3ddc9730;color:var(--ac);display:grid;place-items:center;font-weight:700;font-size:17px}
+.cr{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--bd);border-radius:12px;background:var(--pn2);margin-top:8px;cursor:pointer}.cr:hover{border-color:var(--ac)}.cr input{accent-color:var(--ac);width:18px;height:18px;margin:0}.cr span{margin-left:auto;color:var(--mu)}
+.stp{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--bd);border-radius:12px;background:var(--pn2);padding:6px;margin-top:10px}.stp button{width:44px;height:36px;border:0;background:none;font-size:20px;border-radius:8px}.stp button:hover{background:var(--bd)}
+.badge{font-size:12px;color:var(--ac);background:#3ddc9722;border-radius:8px;padding:5px 10px}
+.go{width:100%;padding:14px;font-size:16px;border-radius:12px}
+.rg{border:1px solid var(--bd);border-radius:12px;padding:11px 13px;margin-top:8px;background:var(--pn2)}.rg small{display:block;color:var(--mu);margin-top:2px}
+.logo{display:flex;align-items:center;gap:10px}.logo .mark{flex-shrink:0;color:var(--ac)}.gbar .mark{color:var(--ac)}
+.modal{position:fixed;inset:0;background:#050814bb;backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px;z-index:80}.modal.on{display:flex}.modal-card{width:min(620px,100%);max-height:90vh;overflow:auto;background:var(--pn);border:1px solid var(--bd);border-radius:18px;padding:20px;box-shadow:0 24px 80px #0008}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:12px;color:var(--mu)}.field input,.field select{width:100%}.condition-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.condition-option{display:flex;align-items:center;gap:8px;padding:9px 10px;border:1px solid var(--bd);border-radius:10px;background:var(--pn2);font-size:12px}.condition-option input{width:auto}.form-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}@media(max-width:700px){.form-grid,.condition-grid{grid-template-columns:1fr}.field.full{grid-column:auto}}
+</style><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27 fill=%27none%27 stroke=%27%2310a574%27 stroke-width=%272.4%27%3E%3Cellipse cx=%2716%27 cy=%2716%27 rx=%2713%27 ry=%275.2%27 transform=%27rotate(45 16 16)%27/%3E%3Cellipse cx=%2716%27 cy=%2716%27 rx=%2713%27 ry=%275.2%27 transform=%27rotate(-45 16 16)%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%272.6%27 fill=%27%2310a574%27 stroke=%27none%27/%3E%3C/svg%3E"></head><body data-view="overview">
+<div class="app">
+<aside><div class="logo"><svg class="mark " viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><ellipse cx="16" cy="16" rx="13" ry="5.2" transform="rotate(45 16 16)"/><ellipse cx="16" cy="16" rx="13" ry="5.2" transform="rotate(-45 16 16)"/><circle cx="16" cy="16" r="2.6" fill="currentColor" stroke="none"/></svg><span>Qure<i>.</i></span></div><div class="sub">Precision through possibility</div><div class="lbl">WORKSPACE</div>
+<button class="nav on" data-v="overview">▦ Overview</button><button class="nav" data-v="galaxy">✦ Medication Galaxy</button><button class="nav" data-v="library">💊 Drug Library</button><button class="nav" data-v="grover">⚛ Grover Screening</button><button class="nav" data-v="matrix">▦ Interaction Matrix</button><button class="nav" data-v="saved">★ Saved Regimens</button><button class="nav" data-v="patients">☺ Patients</button><button class="nav" data-v="reports">▤ Reports</button><button class="nav" data-v="settings">⚙ Settings</button>
+</aside>
+<main>
+<div id="glow"></div><div class="dot" id="dot"></div>
+<div id="pal"><div><input id="pi" placeholder="Type a command…  (Esc to close)"><ul id="pl"></ul></div></div>
+<div class="tick"><span>● LIVE · Loading drug catalog… · Grover simulation ready · Synthetic data only — not for clinical use · Press Ctrl/⌘+K for the command palette ·</span></div>
+<style>.card.pop{position:absolute}</style>
+<header><div class="t"><small>Workspace</small><h2 id="vt">Overview</h2></div><span id="backend-status" class="chip" title="Existing Qure backend connection">● Backend: checking…</span><input class="fq" id="q" placeholder="Search node + Enter…" style="min-width:200px">
+<button class="btn" id="th" title="Theme">☾</button><button class="btn" id="bell">🔔 <span id="bc">3</span></button><div class="chip"><b>SM</b> Research workspace</div></header>
+<div class="card pop" id="pop"><div class="row" style="justify-content:space-between"><b>Alerts</b><button class="btn" id="clr">Clear alerts</button></div><div id="al"></div></div><div class="modal" id="patient-modal" aria-hidden="true"><div class="modal-card"><div class="row" style="justify-content:space-between"><div><h3 id="patient-modal-title">Add patient</h3><p style="color:var(--mu);margin-top:4px">Enter patient details and save them to the Qure database.</p></div><button class="btn" id="patient-modal-close">✕</button></div><form id="patient-form" style="margin-top:16px"><div class="form-grid"><div class="field"><label for="pf-name">Full name</label><input id="pf-name" required maxlength="120" placeholder="e.g. Ananya Sharma"></div><div class="field"><label for="pf-age">Age</label><input id="pf-age" type="number" min="0" max="120" required placeholder="Age"></div><div class="field"><label for="pf-sex">Sex</label><select id="pf-sex" required><option value="">Select</option><option>Female</option><option>Male</option><option>Other</option><option>Prefer not to say</option></select></div><div class="field"><label for="pf-limit">Daily pill limit</label><input id="pf-limit" type="number" min="1" max="8" value="3" required></div><div class="field full"><label>Conditions</label><div class="condition-grid" id="pf-conditions"></div><div class="row" style="margin-top:10px;align-items:stretch"><input id="pf-custom-condition" maxlength="120" placeholder="Add any health condition (e.g. Asthma, Migraine)"><button type="button" class="btn" id="pf-add-condition">+ Add condition</button></div><small style="color:var(--mu);margin-top:5px">You can add any health condition that is not in the benchmark list. Custom conditions are saved to the patient profile.</small></div></div><div class="form-actions"><button type="button" class="btn" id="patient-form-cancel">Cancel</button><button type="submit" class="btn pri" id="patient-form-save">Save patient</button></div></form></div></div>
+
+<div class="gx"><div class="gcol"><section class="gal v v-o v-g"><div class="gh"><div><h2>Medication Galaxy</h2><small>A connected view of medications, conditions, and molecular targets. Candidate drugs are personalized to the selected patient health conditions.</small></div><span class="live">Interactive network</span></div>
+<div class="gbox" id="gbox"><div class="gbar"><svg class="mark " viewBox="0 0 32 32" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><ellipse cx="16" cy="16" rx="13" ry="5.2" transform="rotate(45 16 16)"/><ellipse cx="16" cy="16" rx="13" ry="5.2" transform="rotate(-45 16 16)"/><circle cx="16" cy="16" r="2.6" fill="currentColor" stroke="none"/></svg><b>Medication Galaxy</b><input class="fq" id="q2" placeholder="Find a node…"><button class="ib" id="zr" title="Reset view">⟲</button><button class="ib" id="fs" title="Full screen">⛶</button></div>
+<div class="cw"><canvas id="cv"></canvas><span class="ov" style="top:14px">MOLECULAR INTERACTION NETWORK / 01</span><span class="ov" style="bottom:14px">✥ Drag to explore</span><div class="zoom"><button id="zi">+</button><button id="zo">−</button></div><div class="side" id="side"></div></div>
+<div class="glg"><span id="chips" style="display:contents"></span><small id="cnt"></small></div></div><div style="margin-top:12px" id="basket"></div></section>
+<div class="card v v-g" id="selmed" style="margin-top:16px"></div></div>
+<div class="pp card v v-g"><div class="pph"><h3>Patient profile</h3><button class="ib" id="pe" title="Switch patient" style="border:0;background:none;color:var(--tx)">✎</button></div>
+<div><div class="row" style="gap:14px;flex-wrap:nowrap"><div class="av" id="pav"></div><div><h3 id="pn"></h3><small style="color:var(--mu)" id="pid"></small></div></div><div class="kv" id="pkv"></div></div>
+<div><div class="row" style="justify-content:space-between"><b>Conditions to cover</b><small id="pcn" style="color:var(--mu)"></small></div><div id="pcl"></div></div>
+<div><div class="row" style="justify-content:space-between"><b>Daily pill limit</b><small style="color:var(--mu)">Maximum</small></div><div class="stp"><button id="pmi">−</button><b id="plv"></b><button id="ppl">+</button></div></div>
+<div><div class="row" style="justify-content:space-between;margin-bottom:12px"><span>⚙ Search engine</span><span class="badge">Classical demo</span></div><button class="btn pri go" id="fv">✦ Find valid regimens</button><p style="color:var(--mu);font-size:12px;text-align:center;margin-top:10px">Checks coverage, synthetic exclusions &amp; pill count. No quantum hardware is connected.</p><div id="res"></div></div></div></div>
+<section class="card hero v v-o"><small>PRECISION CARE, REIMAGINED</small><h1>Every connection matters.</h1><p>Explore the medication universe. Discover a better combination.</p><div class="row"><button class="btn pri" data-action="add-patient">+ Add patient</button><button class="btn" data-action="edit-patient">Edit patient</button><button class="btn" data-go="reports">Export profile</button></div></section>
+<section class="grid4 v v-o" id="stats"></section>
+<section class="two v v-o"><div class="card"><h3>Quick actions</h3><div class="row" style="margin-top:10px"><button class="btn" data-qa="Patient added">+ Add Patient</button><button class="btn" data-qa="Prescription created">℞ Prescription</button><button class="btn" data-qa="Message sent">✉ Send Message</button><button class="btn pri" data-go="grover">Find valid regimens</button></div><p style="color:var(--mu);margin-top:10px">Checks coverage, synthetic exclusions & pill count. No quantum hardware is connected.</p></div><div class="card feed"><h3>Activity</h3><div id="feed"></div></div></section>
+
+<section class="v v-gr"><div class="card" style="margin-bottom:12px"><h3 id="grover-title">Grover Screening</h3>
+<div class="row" style="margin:10px 0" id="cc"></div>
+<div class="row"><label>Pill limit <input type="number" id="lim" min="1" max="8" value="5" style="width:64px"></label><label>Noise <input type="range" id="nz" min="0" max="30" value="0"> <span id="nv">0%</span></label></div>
+<div class="row" style="margin-top:12px"><button class="btn" id="st">Step</button><button class="btn pri" id="ro">Run optimal</button><button class="btn" id="rs">Reset</button><button class="btn" id="bb">Unknown M (BBHT)</button></div></div>
+<div class="card"><canvas id="chart"></canvas><div class="row" style="margin-top:8px"><span class="chip"><i style="background:var(--gd)"></i>Valid</span><span class="chip"><i style="background:var(--rd)"></i>Dangerous</span><span class="chip"><i style="background:#64748b"></i>Other</span></div><pre id="gs"></pre></div></section>
+
+<section class="v v-p" id="pts"><div class="card"><div class="row" style="justify-content:space-between"><div><h3>Patients</h3><p style="color:var(--mu);margin-top:4px">Patients are stored in the Qure database and can be reused for screening.</p></div><button class="btn pri" data-action="add-patient">+ Add patient</button></div><div id="patient-list" style="margin-top:14px"></div></div></section>
+<section class="v v-r"><div class="card"><h3>Reports</h3><div class="row" style="margin:10px 0"><button class="btn" id="ecsv">Export CSV</button><button class="btn" id="ejs">Export JSON</button><button class="btn" onclick="print()">Print</button></div><pre id="rp">Choose an export to preview it here.</pre></div></section>
+<section class="v v-s"><div class="card"><h3>Settings</h3><div id="sets"></div></div></section>
+<section class="v v-l"><div class="card"><h3>Drug Library</h3><p style="color:var(--mu);margin:4px 0 10px">All catalog drugs remain searchable. Medicines marked as candidates are those mapped to the selected patient's current health conditions.</p><div class="row" style="margin:10px 0"><input id="ls" placeholder="Filter drugs…"><select id="lf"><option value="">All conditions</option></select><button class="btn" id="lfv">★ Favorites only</button></div><div id="ll"></div></div></section>
+<section class="v v-m"><div class="card"><h3>Interaction Matrix</h3><p style="color:var(--mu)">Click a cell to inspect a pair.</p><div id="mx" style="overflow:auto;margin:12px 0"></div><div id="mi" class="row"></div></div></section>
+<section class="v v-sv"><div class="card"><div class="row" style="justify-content:space-between"><h3>Saved Regimens</h3><button class="btn" id="svc">Clear all</button></div><div id="sl" style="margin-top:10px"></div></div></section>
+<p style="color:var(--mu);margin-top:30px;font-size:12px">© 2026 Qure · Synthetic data only · Not for clinical use</p>
+</main></div>
+<div id="chat"><div id="chatbox"><div style="padding:10px;border-bottom:1px solid var(--bd)"><b>AI Assistant</b></div><div id="msgs"></div><div class="row" style="padding:8px"><input id="ci" placeholder="Ask something…" style="flex:1"></div></div><button class="fab" id="cb">✦ AI Assistant</button></div>
+<div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+// The frontend now uses the backend catalog as its single source of truth.
+let D=[], C=[], T={}, DG=[], ORD=[];
+const TARGET_META={
+  amiodarone:["KCNH2","Antiarrhythmic"], digoxin:["ATP1A1","Cardiac glycoside"],
+  warfarin:["VKORC1","Anticoagulant"], atorvastatin:["HMGCR","Statin"],
+  lisinopril:["ACE","ACE inhibitor"], amlodipine:["CACNA1C","Calcium-channel blocker"],
+  metformin:["PRKAA1","Biguanide"], omeprazole:["ATP4A","Proton-pump inhibitor"],
+  carvedilol:["ADRB1","Beta blocker"], furosemide:["SLC12A1","Loop diuretic"]
+};
+const COL={drug:"#5eead4",condition:"#fbbf24",target:"#818cf8"};
+// nodes
+const N=[],E=[];let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+const mean=(a,f={x:0,y:0,z:0})=>a.length?({x:a.reduce((s,p)=>s+p.x,0)/a.length,y:a.reduce((s,p)=>s+p.y,0)/a.length,z:a.reduce((s,p)=>s+p.z,0)/a.length}):f;
+const place=(n,t,v,r)=>{const l=Math.hypot(v.x,v.y,v.z)||1;N.push({n,t,x:v.x/l*r,y:v.y/l*r,z:v.z/l*r})},dn=n=>N.find(x=>x.n===n);
+const byN=n=>N.find(x=>x.n===n);
+const dang=(a,b)=>DG.some(p=>p.includes(a)&&p.includes(b));
+
+function rebuildGalaxy(){
+  N.length=0; E.length=0;
+  ORD=[...D];
+  const count=Math.max(D.length,1);
+  ORD.forEach((d,i)=>{const y=1-2*(i+.5)/count,q=Math.sqrt(Math.max(0,1-y*y)),a=i*2.399963;place(d,"drug",{x:q*Math.cos(a),y,z:q*Math.sin(a)},.85)});
+  C.forEach((c,i)=>{
+    const linked=D.filter(d=>(T[d]?.[0]||[]).includes(i)).map(d=>dn(d));
+    const a=i*2.399963, fallback={x:Math.cos(a),y:.25,z:Math.sin(a)};
+    place(c,"condition",mean(linked,fallback),.4);
+  });
+  const targets=[...new Set(D.map(d=>T[d]?.[1]).filter(Boolean))];
+  targets.forEach((g,i)=>{
+    const linked=D.filter(d=>T[d]?.[1]===g).map(d=>dn(d));
+    const a=i*2.399963;
+    place(g,"target",mean(linked,{x:Math.cos(a),y:.6,z:Math.sin(a)}),1.3);
+  });
+  D.forEach(d=>{
+    (T[d]?.[0]||[]).forEach(ci=>{if(C[ci])E.push([d,C[ci],"treat"])});
+    if(T[d]?.[1])E.push([d,T[d][1],"target"]);
+  });
+  DG.forEach(p=>E.push([p[0],p[1],"danger"]));
+  S.sel=D[0]||null;
+  updateCatalogUI();
+  if(D.length){pick(D.includes("Atorvastatin")?"Atorvastatin":D[0]);}
+  cnt();
+}
+
+function updateCatalogUI(){
+  const n=D.length, candidateCount=candidateDrugs().length, combos=Math.pow(2,candidateCount), targets=new Set(D.map(d=>T[d]?.[1]).filter(Boolean)).size;
+  const pairCount=DG.length;
+  const tick=document.querySelector(".tick span");
+  if(tick)tick.textContent=`● LIVE · ${n} drugs · ${C.length} conditions · ${targets} molecular targets mapped · ${pairCount} dangerous pairs flagged · ${combos} combinations screened · Grover simulation ready · Synthetic data only — not for clinical use · Press Ctrl/⌘+K for the command palette ·`;
+  const title=$("#grover-title"); if(title)title.textContent=`Grover Screening — ${combos} combinations of ${n} drugs`;
+  const lim=$("#lim"); if(lim)lim.max=Math.min(10,Math.max(1,n));
+  const chips=$("#chips"); if(chips)chips.innerHTML=CH.map(c=>`<label><input type="checkbox" data-l="${c[0]}" checked><i style="background:${COL[c[0]]||"#f43f5e"}"></i>${c[1]}</label>`).join("");
+  $$('[data-l]').forEach(b=>b.onchange=()=>{S.layers[b.dataset.l]=b.checked?1:0;cnt()});
+  const lf=$("#lf"); if(lf)lf.innerHTML=`<option value="">All conditions</option>`+C.map((c,i)=>`<option value="${i}">${c}</option>`).join("");
+  const cc=$("#cc"); if(cc)cc.innerHTML=C.map((c,i)=>`<label class="chip"><input type="checkbox" data-c="${i}" ${S.conds.has(i)?"checked":""}> ${c}</label>`).join("");
+  $$('[data-c]').forEach(b=>b.onchange=()=>{b.checked?S.conds.add(+b.dataset.c):S.conds.delete(+b.dataset.c);greset()});
+  lib(); mat(); stats();
+}
+
+async function loadDrugCatalog(){
+  try{
+    const r=await fetch("/api/local/catalog",{headers:{"Accept":"application/json"}});
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    const data=await r.json();
+    C=(data.conditions||[]).map(x=>x.label);
+    window.__conditionIds=(data.conditions||[]).map(x=>x.id);
+    const cIndex=Object.fromEntries((data.conditions||[]).map((x,i)=>[x.id,i]));
+    D=(data.drugs||[]).map(x=>x.name).filter(Boolean);
+    T={};
+    (data.drugs||[]).forEach(d=>{
+      const meta=TARGET_META[d.name]||[];
+      T[d.name]=[(d.conditions||[]).map(id=>cIndex[id]).filter(i=>Number.isInteger(i)),meta[0]||"",meta[1]||"Clinical medication"];
+    });
+    DG=(data.interactions||[]).filter(x=>String(x.severity).toUpperCase()==="FORBIDDEN").map(x=>[x.drug_a,x.drug_b]);
+    rebuildGalaxy();
+    rebuildCommands();
+    if(D.length){S.conds=new Set(C.map((_,i)=>i));if(!S.conds.size)S.conds=new Set([0]);}
+    greset(); pts(); renderPP(); bk(); size();
+    note(`Loaded ${D.length} drugs from the backend catalog`);
+    return true;
+  }catch(e){
+    console.error("Drug catalog error",e);
+    toast("Unable to load the backend drug catalog");
+    return false;
+  }
+}
+// state
+const S={view:"overview",layers:{drug:1,condition:1,target:1,danger:1},rot:1,labels:1,alerts:1,yaw:.5,pit:.3,zoom:1,sel:null,hl:0,basket:[],conds:new Set([0,1,2,3]),limit:5,noise:0,amp:null,steps:0,q:0,tgt:null,patient:"Eleanor Morgan"};
+let PT=[{n:"Eleanor Morgan",id:"PT-2026-084",s:"Female",age:68,c:[0,1,2,3],l:5},{n:"James Carter",id:"PT-2026-112",s:"Male",age:54,c:[0,2],l:3},{n:"Priya Nair",id:"PT-2026-131",s:"Female",age:61,c:[1,3],l:4}];
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(t.h);t.h=setTimeout(()=>t.classList.remove("on"),2200)}
+const alerts=["Synthetic dataset loaded","Backend catalog ready","Research prototype — not for clinical use"];
+function renderAl(){$("#al").innerHTML=alerts.map(a=>`<p style="padding:6px 0;border-bottom:1px solid var(--bd)">${a}</p>`).join("")||'<p style="color:var(--mu)">No alerts</p>';$("#bc").textContent=alerts.length}
+function note(m,a){const f=$("#feed");f.innerHTML=`<div>${m}<small>${new Date().toLocaleTimeString()}</small></div>`+f.innerHTML;if(a&&S.alerts){alerts.unshift(m);renderAl()}}
+// views
+const VT={overview:"Overview",galaxy:"Medication Galaxy",grover:"Grover Screening",patients:"Patients",reports:"Reports",settings:"Settings",library:"Drug Library",matrix:"Interaction Matrix",saved:"Saved Regimens"};
+function go(v){S.view=v;document.body.dataset.view=v;$("#vt").textContent=VT[v];$$(".nav").forEach(b=>b.classList.toggle("on",b.dataset.v===v));if(v==="grover")drawChart();setTimeout(size,0);scrollTo(0,0)}
+$$(".nav").forEach(b=>b.onclick=()=>go(b.dataset.v));$$("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
+$$("[data-qa]").forEach(b=>b.onclick=()=>{toast("✓ "+b.dataset.qa);note(b.dataset.qa)});
+$("#th").onclick=()=>{const r=document.documentElement,l=r.dataset.theme==="light";r.dataset.theme=l?"":"light";$("#th").textContent=l?"☾":"☀"};
+$("#bell").onclick=()=>$("#pop").classList.toggle("on");$("#clr").onclick=()=>{alerts.length=0;renderAl();toast("Alerts cleared")};
+function stats(){const n=candidateDrugs().length,combos=n?Math.pow(2,n):0;$("#stats").innerHTML=[[S.conds.size,"Active conditions","Personalized constraints"],[combos,"Possible combinations",`${n} condition-relevant medication options`],[S.limit,"Daily pill limit","Less burden"],[DG.length,"Dangerous pairs","Synthetic exclusions"]].map(s=>`<div class="card stat"><b>${s[0]}</b>${s[1]}<br><span>${s[2]}</span></div>`).join("")}
+// chips
+const CH=[["drug","Medications"],["condition","Conditions"],["target","Targets"],["danger","Exclusions"]];
+function vis(n){return S.layers[n.t]}
+function cnt(){const v=N.filter(vis).length;$("#cnt").textContent=v+" nodes · "+E.filter(e=>ev(e)).length+" connections"}
+function ev(e){const a=byN(e[0]),b=byN(e[1]);return vis(a)&&vis(b)&&(e[2]!=="danger"||S.layers.danger)}
+// canvas
+const cv=$("#cv"),cx=cv.getContext("2d");let W=0,H=0,P=[];const stars=Array.from({length:140},()=>({x:rnd()*4-2,y:rnd()*4-2,z:rnd()*4-2}));
+function size(){const r=cv.getBoundingClientRect();if(!r.width)return;const d=devicePixelRatio||1;W=r.width;H=r.height;cv.width=W*d;cv.height=H*d;cx.setTransform(d,0,0,d,0,0)}
+addEventListener("resize",()=>{size();drawChart()});
+function proj(p){const cy=Math.cos(S.yaw),sy=Math.sin(S.yaw),cp=Math.cos(S.pit),sp=Math.sin(S.pit);const x1=p.x*cy+p.z*sy,z1=-p.x*sy+p.z*cy,y2=p.y*cp-z1*sp,z2=p.y*sp+z1*cp;const k=S.zoom*Math.min(W,H)*.36,f=3/(3-z2);return{x:W/2+x1*k*f,y:H/2+y2*k*f,z:z2,f}}
+const RINGS=[[.4,.5,0],[.85,1.1,.4],[1.3,.3,-.3]];
+function ring(r,tx,tz){cx.beginPath();for(let i=0;i<=72;i++){const a=i/72*6.2832,x=r*Math.cos(a),z=r*Math.sin(a),y1=-z*Math.sin(tx),z1=z*Math.cos(tx),q=proj({x:x*Math.cos(tz)-y1*Math.sin(tz),y:x*Math.sin(tz)+y1*Math.cos(tz),z:z1});i?cx.lineTo(q.x,q.y):cx.moveTo(q.x,q.y)}cx.stroke()}
+function lens(a,b,w,st){const dx=b.x-a.x,dy=b.y-a.y,l=Math.hypot(dx,dy)||1,nx=-dy/l,ny=dx/l,mx=(a.x+b.x)/2+nx*l*.14,my=(a.y+b.y)/2+ny*l*.14;cx.beginPath();cx.moveTo(a.x,a.y);if(st){cx.quadraticCurveTo(mx,my,b.x,b.y);cx.stroke();return}cx.quadraticCurveTo(mx+nx*w,my+ny*w,b.x,b.y);cx.quadraticCurveTo(mx-nx*w,my-ny*w,a.x,a.y);cx.fill()}
+function pill(x,y,s){cx.save();cx.translate(x,y);cx.rotate(-.78);cx.strokeStyle="#052b22";cx.lineWidth=Math.max(1.4,s*.15);cx.beginPath();cx.roundRect(-s*.5,-s*.26,s,s*.52,s*.26);cx.moveTo(0,-s*.26);cx.lineTo(0,s*.26);cx.stroke();cx.restore()}
+function heart(x,y,s){cx.save();cx.translate(x,y+s*.05);cx.fillStyle="#4a2f00";cx.beginPath();cx.moveTo(0,s*.45);cx.bezierCurveTo(-s*.95,-s*.1,-s*.5,-s*.7,0,-s*.25);cx.bezierCurveTo(s*.5,-s*.7,s*.95,-s*.1,0,s*.45);cx.fill();cx.restore()}
+function frame(t){requestAnimationFrame(frame);if(!W||cv.offsetParent===null)return;
+if(S.rot&&!drag&&!S.tgt)S.yaw+=.003;if(S.tgt){S.yaw+=(S.tgt.y-S.yaw)*.1;S.pit+=(S.tgt.p-S.pit)*.1;if(Math.abs(S.tgt.y-S.yaw)<.01)S.tgt=null}
+cx.clearRect(0,0,W,H);cx.shadowBlur=0;
+stars.forEach(s=>{const q=proj(s);cx.fillStyle=`rgba(200,230,255,${.12+.25*(q.z+2)/4})`;cx.fillRect(q.x,q.y,1.4,1.4)});
+cx.strokeStyle="rgba(94,234,212,.13)";cx.lineWidth=1;RINGS.forEach(r=>ring(...r));
+P=N.map(n=>({n,...proj(n)}));const pm=Object.fromEntries(P.map(p=>[p.n.n,p]));
+E.forEach(e=>{if(!ev(e))return;const a=pm[e[0]],b=pm[e[1]],hot=S.sel&&e.includes(S.sel),f=(a.f+b.f)/2;
+if(e[2]==="danger"){cx.setLineDash([5,5]);cx.strokeStyle=hot?"#ff6b85":"rgba(244,63,94,.7)";cx.lineWidth=hot?2.2:1.3;cx.beginPath();cx.moveTo(a.x,a.y);cx.lineTo(b.x,b.y);cx.stroke();cx.setLineDash([])}
+else if(hot){cx.strokeStyle="#5eead4";cx.lineWidth=1.8;cx.shadowColor="#5eead4";cx.shadowBlur=10;lens(a,b,0,1);cx.shadowBlur=0}
+else{cx.fillStyle="rgba(120,205,185,.2)";lens(a,b,4.5*f)}});
+P.filter(p=>vis(p.n)).sort((a,b)=>a.z-b.z).forEach(p=>{const n=p.n,c=COL[n.t],sel=S.sel===n.n,inB=S.basket.includes(n.n),k=p.f,al=Math.min(1,.62+.38*(p.z+1.5)/3);
+let r=(n.t==="drug"?17:n.t==="condition"?15:7)*k;if(S.hl&&sel)r+=3*Math.sin(t/120)+3;
+if(sel)for(let i=0;i<2;i++){const q=(t/1500+i/2)%1;cx.globalAlpha=(1-q)*.55;cx.strokeStyle=c;cx.lineWidth=1.5;cx.beginPath();cx.arc(p.x,p.y,r+6+q*36*k,0,7);cx.stroke()}
+cx.globalAlpha=al;cx.shadowColor=c;cx.shadowBlur=sel||inB?30:14;cx.fillStyle=c;cx.beginPath();cx.arc(p.x,p.y,r,0,7);cx.fill();cx.shadowBlur=0;
+if(n.t==="target"){cx.fillStyle="#fff";cx.beginPath();cx.arc(p.x,p.y,r*.38,0,7);cx.fill()}
+else{cx.strokeStyle="rgba(255,255,255,.8)";cx.lineWidth=2*k;cx.beginPath();cx.arc(p.x,p.y,r,0,7);cx.stroke();n.t==="drug"?pill(p.x,p.y,r*1.05):heart(p.x,p.y,r*.9)}
+if(inB){cx.strokeStyle="#fff";cx.lineWidth=2;cx.setLineDash([3,3]);cx.beginPath();cx.arc(p.x,p.y,r+6,0,7);cx.stroke();cx.setLineDash([])}
+if(S.labels||sel){const fs=Math.round(12*Math.min(1.25,Math.max(.8,k)));cx.font=`600 ${fs}px "Plus Jakarta Sans",system-ui,sans-serif`;cx.lineJoin="round";cx.lineWidth=3;cx.strokeStyle="#071210dd";cx.fillStyle="#e4f4ef";
+const dr=n.t==="drug";cx.textAlign=dr?"center":"left";const lx=dr?p.x:p.x+r+7,ly=dr?p.y+r+fs+3:p.y+4;cx.strokeText(n.n,lx,ly);cx.fillText(n.n,lx,ly);cx.textAlign="left"}
+cx.globalAlpha=1})}
+requestAnimationFrame(frame);
+let drag=0,lx,ly,moved=0;
+cv.onpointerdown=e=>{drag=1;moved=0;lx=e.clientX;ly=e.clientY;cv.setPointerCapture(e.pointerId);S.tgt=null};
+cv.onpointermove=e=>{if(!drag)return;const dx=e.clientX-lx,dy=e.clientY-ly;moved+=Math.abs(dx)+Math.abs(dy);S.yaw+=dx*.008;S.pit=Math.max(-1.4,Math.min(1.4,S.pit+dy*.008));lx=e.clientX;ly=e.clientY};
+cv.onpointerup=e=>{drag=0;if(moved<5){const r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;let b=null,bd=26;P.filter(p=>vis(p.n)).forEach(p=>{const d=Math.hypot(p.x-x,p.y-y);if(d<bd){bd=d;b=p.n}});if(b)pick(b.n);else{desel()}}};
+cv.onwheel=e=>{e.preventDefault();S.zoom=Math.max(.5,Math.min(2.5,S.zoom*(e.deltaY<0?1.08:.93)))};
+$("#zi").onclick=()=>S.zoom=Math.min(2.5,S.zoom*1.2);$("#zo").onclick=()=>S.zoom=Math.max(.5,S.zoom/1.2);$("#zr").onclick=()=>{S.zoom=1;S.yaw=.5;S.pit=.3;desel()};
+function nodeHTML(n){const nd=byN(n),nb=E.filter(e=>e.includes(n)).map(e=>({o:e[0]===n?e[1]:e[0],k:e[2]}));let h=`<small style="color:${COL[nd.t]};font-weight:600">Selected ${nd.t==="drug"?"medication":nd.t}</small><h3 style="font-size:22px;margin:2px 0 6px">${n}</h3>`;
+if(nd.t==="drug"){const bad=nb.filter(x=>x.k==="danger").map(x=>x.o),inB=S.basket.includes(n),conds=(T[n]?.[0]||[]).map(i=>C[i]).filter(Boolean),relevant=candidateDrugs().includes(n);h+=`<div class="kv"><div><small>Class</small><b>${T[n]?.[2]||"Clinical medication"}</b></div><div><small>Treats</small><b>${conds.join(", ")||"Not mapped"}</b></div><div><small>Molecular target</small><b>${T[n]?.[1]||"Not mapped"}</b></div></div><p style="margin:14px 0 6px"><small style="color:var(--mu)">Patient-specific relevance</small></p><p>${relevant?'<span class="ok">✓ Candidate for the selected health conditions</span>':'<span style="color:var(--mu)">Not selected because it does not cover the current health conditions</span>'}</p><p style="margin:14px 0 6px"><small style="color:var(--mu)">Exclusions</small></p><div class="row">${bad.map(x=>`<span class="chip"><i style="background:var(--rd)"></i>${x}</span>`).join("")||'<span class="ok">No known dangerous pairs</span>'}</div>${inB?`<button class="btn pri" style="margin-top:14px" onclick="rmB('${n}')">Remove from basket</button>`:relevant?`<button class="btn pri" style="margin-top:14px" onclick="addB('${n}')">Add to basket</button>`:`<button class="btn" style="margin-top:14px" disabled>Not a candidate for current patient</button>`}`}
+else h+=`<p style="color:var(--mu);margin-bottom:6px">Connected to</p><div class="row">${nb.map(x=>`<span class="chip">${x.o}</span>`).join("")}</div>`;return h}
+function pick(n){S.sel=n;const h=nodeHTML(n);$("#selmed").innerHTML=h;$("#side").innerHTML=`<button class="x" onclick="desel()">×</button>`+h;$("#side").classList.add("on")}
+function desel(){$("#side").classList.remove("on");S.sel=null;$("#selmed").innerHTML='<p style="color:var(--mu)">Click any node in the galaxy to see its details.</p>'}
+function focus(n){const nd=byN(n);S.tgt={y:Math.atan2(-nd.x,nd.z),p:.2};S.hl=1;setTimeout(()=>S.hl=0,4000);pick(n.n||n)}
+$$(".fq").forEach(i=>i.onkeydown=e=>{if(e.key!=="Enter")return;const v=e.target.value.trim().toLowerCase();const m=N.find(n=>n.n.toLowerCase()===v)||N.find(n=>n.n.toLowerCase().includes(v));if(!v)return;if(m){if(!S.layers[m.t]){S.layers[m.t]=1;$(`[data-l=${m.t}]`).checked=true}if(S.view!=="galaxy"&&S.view!=="overview")go("overview");focus(m.n);toast("Found "+m.n)}else toast("No node named “"+e.target.value+"”")});
+// basket
+function addB(n){if(!S.basket.includes(n))S.basket.push(n);bk()}
+function rmB(n){S.basket=S.basket.filter(x=>x!==n);bk()}
+function bk(){if(S.sel&&byN(S.sel).t==="drug")setTimeout(()=>$("#selmed").innerHTML=nodeHTML(S.sel));const b=S.basket,pairs=[];b.forEach((x,i)=>b.slice(i+1).forEach(y=>dang(x,y)&&pairs.push([x,y])));const cov=new Set(b.flatMap(d=>T[d]?.[0]||[]));const required=[...S.conds];const coveredRequired=required.filter(i=>cov.has(i)).length;
+$("#basket").innerHTML=b.length?`<div class="row"><b>Basket:</b>${b.map(d=>`<span class="chip">${d} <a href="#" onclick="rmB('${d}');return false" style="color:var(--rd)">✕</a></span>`).join("")}<button class="btn pri" onclick="saveB()">Save regimen</button><button class="btn" onclick="S.basket=[];bk()">Clear</button></div><p style="margin-top:6px">${pairs.length?`<span class="warn">⚠ Dangerous combination: ${pairs.map(p=>p.join(" + ")).join("; ")}</span>`:'<span class="ok">✓ No dangerous pairs</span>'} · Covers ${coveredRequired}/${required.length} selected conditions · ${b.length} pill${b.length>1?"s":""}</p>`:"";
+if(pairs.length)note("Warning: "+pairs[pairs.length-1].join(" + ")+" in basket",1)}
+// grover — the quantum search space is personalized to the patient's conditions.
+const pop=m=>{let c=0;while(m){c+=m&1;m>>=1}return c};
+function candidateDrugs(){
+  const selected=[...S.conds];
+  if(!selected.length)return [];
+  return D.filter(d=>(T[d]?.[0]||[]).some(i=>selected.includes(i)));
+}
+function hasD(m){const Q=candidateDrugs();return DG.some(p=>{const a=Q.indexOf(p[0]),b=Q.indexOf(p[1]);return a>=0&&b>=0&&((m>>a)&1)&&((m>>b)&1)});}
+function valid(m){const Q=candidateDrugs();if(!m||!Q.length||pop(m)>S.limit||hasD(m))return 0;for(const c of S.conds)if(!Q.some((d,i)=>((m>>i)&1)&&(T[d]?.[0]||[]).includes(c)))return 0;return 1}
+const NSTATE=()=>Math.pow(2,candidateDrugs().length);
+const V=()=>Array.from({length:NSTATE()},(_,m)=>valid(m)),M=()=>V().filter(Boolean).length;
+function syncC(){$$("[data-c]").forEach(b=>b.checked=S.conds.has(+b.dataset.c));$("#lim").value=S.limit}
+$("#lim").onchange=e=>{S.limit=+e.target.value||5;greset()};$("#nz").oninput=e=>{S.noise=e.target.value/100;$("#nv").textContent=e.target.value+"%"};
+function greset(){const n=NSTATE();S.amp=new Float64Array(n).fill(1/Math.sqrt(n));S.steps=0;S.q=0;gin="";stats();drawChart();info()}
+let gin="";
+function gstep(){const v=V();const a=S.amp,n=a.length;for(let i=0;i<n;i++)if(v[i])a[i]=-a[i];let mn=0;a.forEach(x=>mn+=x);mn/=n;for(let i=0;i<n;i++)a[i]=2*mn-a[i];
+if(S.noise){const base=1/Math.sqrt(n);for(let i=0;i<n;i++)a[i]=a[i]*(1-S.noise)+S.noise*base;let ss=0;a.forEach(x=>ss+=x*x);ss=Math.sqrt(ss)||1;for(let i=0;i<n;i++)a[i]/=ss}S.steps++;S.q++}
+function pv(){const v=V();let p=0;S.amp.forEach((x,i)=>v[i]&&(p+=x*x));return p}
+function info(extra){const m=M(),n=NSTATE(),k=m?Math.floor(Math.PI/4*Math.sqrt(n/m)):0,cl=((n+1)/(m+1)).toFixed(1);
+$("#gs").textContent=`Valid states M = ${m} of ${n}\nOptimal Grover iterations ≈ ${k}\nIterations run: ${S.steps}\nP(valid) = ${(pv()*100).toFixed(1)}%\nQueries — Grover: ${S.q} · Classical (expected): ${m?cl:"∞"}\n`+(extra||"")}
+function drawChart(){const c=$("#chart");if(!c.offsetParent||!S.amp)return;const d=devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight;c.width=w*d;c.height=h*d;const g=c.getContext("2d");g.setTransform(d,0,0,d,0,0);const v=V(),mx=Math.max(...S.amp.map(x=>x*x),.02),bw=w/S.amp.length;
+for(let i=0;i<S.amp.length;i++){const p=S.amp[i]**2,bh=p/mx*(h-8);g.fillStyle=v[i]?"#22c55e":hasD(i)?"#f43f5e":"#64748b";g.globalAlpha=v[i]?1:.7;g.fillRect(i*bw,h-bh,Math.max(bw-.5,.6),bh)}}
+function upd(x){info(x);drawChart()}
+$("#st").onclick=()=>{if(!M())return upd("No valid combination exists for these constraints.");gstep();upd()};
+$("#rs").onclick=greset;
+$("#ro").onclick=()=>{const m=M();if(!m)return upd("No valid combination exists for these constraints.");greset();const k=Math.floor(Math.PI/4*Math.sqrt(NSTATE()/m));let i=0;const h=setInterval(()=>{if(i++>=k){clearInterval(h);return measure()}gstep();upd()},180)};
+function measure(){let r=Math.random(),s=0,pick=NSTATE()-1;for(let i=0;i<NSTATE();i++){s+=S.amp[i]**2;if(r<=s){pick=i;break}}const Q=candidateDrugs(),ok=valid(pick);upd(`Measured: ${Q.filter((_,i)=>pick>>i&1).join(" + ")||"∅"} → ${ok?"VALID ✓":"not valid ✗"}`);return ok}
+$("#bb").onclick=()=>{const m=M();if(!m)return upd("No valid combination exists for these constraints.");let mm=1,tot=0,log="BBHT run (M unknown):\n",ok=0,tries=0;
+while(!ok&&tries++<40){const j=Math.floor(Math.random()*mm);greset();for(let i=0;i<j;i++)gstep();tot+=j+1;let r=Math.random(),s=0,pk=NSTATE()-1;for(let i=0;i<NSTATE();i++){s+=S.amp[i]**2;if(r<=s){pk=i;break}}ok=valid(pk);log+=`  m=${mm.toFixed(1)} j=${j} → ${ok?"valid":"miss"}\n`;mm=Math.min(mm*1.2,16);if(ok)window._pk=pk}
+S.q=tot;const Q=candidateDrugs();upd(log+`Total oracle queries: ${tot}\nFound: ${Q.filter((_,i)=>window._pk>>i&1).join(" + ")}`);note("BBHT found a regimen in "+tot+" queries")};
+// patients
+function ensureCondition(id,label){
+  if(!id)return -1;
+  window.__conditionIds=window.__conditionIds||[];
+  let i=window.__conditionIds.indexOf(id);
+  if(i<0){i=window.__conditionIds.length;window.__conditionIds.push(id);C.push(label||id.replace(/^custom:/,""));}
+  return i;
+}
+function conditionLabelFor(id,label){return label||((id||"").replace(/^custom:/,"").replaceAll("_"," "));}
+function patientToUi(p){const ids=p.conditions||[];const labels=p.condition_labels||[];const c=ids.map((id,i)=>ensureCondition(id,conditionLabelFor(id,labels[i]))).filter(i=>i>=0);return {n:p.name,id:p.id,s:p.sex,age:p.age,c,l:p.pill_limit,conditions:ids,conditionLabels:ids.map((id,i)=>conditionLabelFor(id,labels[i]))}}
+function esc(v){return String(v??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch]))}
+async function loadPatients(){try{const r=await fetch("/api/local/patients");if(!r.ok)throw new Error("HTTP "+r.status);const d=await r.json();PT=(d.patients||[]).map(patientToUi);if(!PT.length)throw new Error("No patients");if(!PT.some(p=>p.n===S.patient))S.patient=PT[0].n;const p=PT.find(x=>x.n===S.patient)||PT[0];S.conds=new Set(p.c);S.limit=p.l;updateCatalogUI();pts();renderPP();return true}catch(e){console.error(e);pts();return false}}
+function pts(){$("#patient-list").innerHTML=PT.map((p,i)=>`<div class="card" style="margin-bottom:10px;background:var(--pn2)"><div class="row" style="justify-content:space-between"><div><h3>${esc(p.n)}</h3><small style="color:var(--mu)">${esc(p.id)} · ${p.age} yrs · limit ${p.l} pills · ${esc(p.s)}</small><p style="margin-top:4px">${p.conditionLabels.map(esc).join(", ")}</p></div><div class="row"><button class="btn" data-edit-pt="${i}">Edit</button><button class="btn pri" data-pt="${i}">Load into screening</button></div></div></div>`).join("")||'<p style="color:var(--mu)">No patients found.</p>';
+$$("[data-pt]").forEach(b=>b.onclick=()=>{const p=PT[+b.dataset.pt];S.conds=new Set(p.c);S.limit=p.l;S.patient=p.n;syncC();greset();go("grover");toast("Loaded "+p.n);note("Loaded "+p.n+" into screening")});
+$$("[data-edit-pt]").forEach(b=>b.onclick=()=>openPatientForm("edit",PT[+b.dataset.editPt]));}
+
+let patientFormMode="add", patientFormId=null;
+function renderConditionForm(selected=[]){
+  const knownIds=window.__conditionIds||[];
+  const builtInHtml=C.map((c,i)=>{const id=knownIds[i]||c.toLowerCase().replace(/[^a-z0-9]+/g,"_");if(id.startsWith("custom:"))return "";return `<label class="condition-option"><input type="checkbox" value="${esc(id)}" ${selected.includes(id)?"checked":""}>${esc(c)}</label>`}).join("");
+  const custom=selected.filter(id=>String(id).startsWith("custom:"));
+  const customHtml=custom.map(id=>`<label class="condition-option"><input type="checkbox" value="${esc(id)}" checked><span>Custom: ${esc(conditionLabelFor(id))}</span></label>`).join("");
+  $("#pf-conditions").innerHTML=builtInHtml+customHtml;
+}
+function addCustomConditionToForm(){
+  const input=$("#pf-custom-condition");
+  const label=input.value.trim().replace(/\s+/g," ");
+  if(!label)return toast("Enter a health condition first");
+  if(label.length>120)return toast("Condition name must be 120 characters or fewer");
+  const value="custom:"+label;
+  const exists=[...$("#pf-conditions").querySelectorAll("input")].some(x=>String(x.value).toLowerCase()===value.toLowerCase());
+  if(exists){input.value="";return toast("That condition is already selected");}
+  const wrap=document.createElement("label");wrap.className="condition-option";wrap.innerHTML=`<input type="checkbox" value="${esc(value)}" checked><span>Custom: ${esc(label)}</span>`;$("#pf-conditions").append(wrap);input.value="";input.focus();}
+
+function openPatientForm(mode="add", p=null){patientFormMode=mode;patientFormId=p?.id||null;$("#patient-modal-title").textContent=mode==="edit"?"Edit patient":"Add patient";$("#patient-form-save").textContent=mode==="edit"?"Save changes":"Add patient";$("#pf-name").value=p?.n||"";$("#pf-age").value=p?.age??"";$("#pf-sex").value=p?.s||"";$("#pf-limit").value=p?.l??3;$("#pf-custom-condition").value="";renderConditionForm(p?.conditions||[]);$("#patient-modal").classList.add("on");$("#patient-modal").setAttribute("aria-hidden","false");setTimeout(()=>$("#pf-name").focus(),50)}
+function closePatientForm(){$("#patient-modal").classList.remove("on");$("#patient-modal").setAttribute("aria-hidden","true")}
+async function submitPatientForm(e){e.preventDefault();const selectedConditions=[...$("#pf-conditions").querySelectorAll("input:checked")].map(x=>x.value);if(!selectedConditions.length)return toast("Select at least one condition");const payload={name:$("#pf-name").value.trim(),age:+$("#pf-age").value,sex:$("#pf-sex").value,pill_limit:+$("#pf-limit").value,conditions:selectedConditions};try{const url=patientFormMode==="edit"?`/api/local/patients/${encodeURIComponent(patientFormId)}`:"/api/local/patients";const r=await fetch(url,{method:patientFormMode==="edit"?"PUT":"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(payload)});const d=await r.json();if(!r.ok)throw new Error(d.detail||"Unable to save patient");await loadPatients();const p=patientToUi(d);S.patient=p.n;S.conds=new Set(p.c);S.limit=p.l;syncC();greset();closePatientForm();go("patients");toast(patientFormMode==="edit"?"Patient updated":"Patient added to database");note(patientFormMode==="edit"?"Updated "+p.n:"Added "+p.n+" to the patient database")}catch(err){toast(err.message||"Unable to save patient")}}
+$("#patient-form").onsubmit=submitPatientForm;$("#patient-modal-close").onclick=closePatientForm;$("#patient-form-cancel").onclick=closePatientForm;$("#pf-add-condition").onclick=addCustomConditionToForm;$("#pf-custom-condition").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();addCustomConditionToForm()}};$("#patient-modal").onclick=e=>{if(e.target.id==="patient-modal")closePatientForm()};
+$$('[data-action="add-patient"]').forEach(b=>b.onclick=()=>openPatientForm("add"));
+$$('[data-action="edit-patient"]').forEach(b=>b.onclick=()=>{const p=PT.find(x=>x.n===S.patient)||PT[0];openPatientForm("edit",p)});
+
+// reports
+function combos(){const Q=candidateDrugs(),o=[];V().forEach((v,m)=>v&&o.push(Q.filter((_,i)=>m>>i&1)));return o.sort((a,b)=>a.length-b.length)}
+function dl(name,txt,type){$("#rp").textContent=txt.slice(0,4000);try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type}));a.download=name;a.click()}catch(e){}toast("Exported "+name)}
+$("#ecsv").onclick=()=>dl("qure-regimens.csv","pills,drugs\n"+combos().map(c=>c.length+',"'+c.join(" + ")+'"').join("\n"),"text/csv");
+$("#ejs").onclick=()=>dl("qure-report.json",JSON.stringify({patient:S.patient,conditions:[...S.conds].map(i=>C[i]),pillLimit:S.limit,basket:S.basket,validRegimens:combos()},null,2),"application/json");
+// settings
+const SET=[["rot","Auto-rotate galaxy"],["labels","Show node labels"],["alerts","Alert notifications"]];
+$("#sets").innerHTML=SET.map(s=>`<div class="tgl"><span>${s[1]}</span><input type="checkbox" data-s="${s[0]}" checked></div>`).join("");
+$$("[data-s]").forEach(b=>b.onchange=()=>{S[b.dataset.s]=b.checked?1:0;toast(b.checked?"Enabled":"Disabled")});
+// chat
+const R=[[/danger|interact/,()=>{const p=DG.map(x=>x.join(" + ")).join(", ");return p?`Dangerous pairs in the current benchmark: ${p}.`:"No forbidden pairs are currently flagged in the loaded benchmark."}],[/grover|quantum/,()=>`Grover amplifies valid combinations among the current ${Math.pow(2,D.length)} candidate states in ≈ π/4·√(N/M) steps. This is a classical simulation.`],[/pill|limit/,"Set the pill limit in Grover Screening. Fewer pills means fewer valid regimens."],[/hello|hi/,"Hello! Ask me about drugs, interactions or Grover screening."]];
+$("#cb").onclick=()=>$("#chatbox").classList.toggle("on");
+function say(t,u){const d=document.createElement("div");d.className="m"+(u?" u":"");d.textContent=t;$("#msgs").append(d);$("#msgs").scrollTop=1e5}
+say("Hi, I'm your demo assistant. Try asking about interactions or Grover.");
+$("#ci").onkeydown=e=>{if(e.key!=="Enter"||!e.target.value.trim())return;const t=e.target.value;e.target.value="";say(t,1);const r=R.find(r=>r[0].test(t.toLowerCase()));setTimeout(()=>say(r?r[1]:"This is a synthetic demo — not for clinical use. Try asking about interactions, pills or Grover."),400)};
+// ---- extra UX ----
+const fine=matchMedia("(pointer:fine)").matches;
+document.addEventListener("pointermove",e=>{if(!fine)return;$("#glow").style.transform=`translate(${e.clientX}px,${e.clientY}px)`;$("#dot").style.transform=`translate(${e.clientX}px,${e.clientY}px)`;
+const c=e.target.closest&&e.target.closest(".card");if(c){const r=c.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;c.style.setProperty("--mx",x+"px");c.style.setProperty("--my",y+"px");
+if(c.classList.contains("stat")||c.parentElement.classList.contains("two")||c.id==="x"){c.style.transform=`perspective(700px) rotateX(${(.5-y/r.height)*10}deg) rotateY(${(x/r.width-.5)*12}deg) translateZ(6px)`}}});
+document.addEventListener("pointerout",e=>{const c=e.target.closest&&e.target.closest(".card");if(c)c.style.transform=""});
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest(".btn,.nav");if(!b)return;const r=b.getBoundingClientRect(),s=document.createElement("span");s.className="rip";const d=Math.max(r.width,r.height);s.style.cssText=`width:${d}px;height:${d}px;left:${e.clientX-r.left-d/2}px;top:${e.clientY-r.top-d/2}px`;b.append(s);setTimeout(()=>s.remove(),600)});
+function countUp(){$$(".stat b").forEach(b=>{const to=+b.textContent,t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/900);b.textContent=Math.round(to*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(f)})(t0)})}
+const _st=stats;stats=function(){_st();countUp()};
+function confetti(){const cs=["#5eead4","#a78bfa","#f43f5e","#fbbf24","#60a5fa"];for(let i=0;i<70;i++){const s=document.createElement("i");s.className="cf";s.style.cssText=`left:${Math.random()*100}vw;background:${cs[i%5]};animation-delay:${Math.random()*.6}s;animation-duration:${1.6+Math.random()*1.4}s`;document.body.append(s);setTimeout(()=>s.remove(),3500)}}
+const _ms=measure;measure=function(){const r=_ms();if(r)confetti();return r};
+const _nt=note;note=function(m,a){_nt(m,a);if(/^BBHT found/.test(m))confetti()};
+// command palette
+let CMD=[];
+function rebuildCommands(){CMD=[...Object.entries(VT).map(([k,v])=>["Go to "+v,()=>go(k)]),["Toggle theme",()=>$("#th").click()],["Run optimal Grover",()=>{go("grover");$("#ro").click()}],["Unknown M (BBHT)",()=>{go("grover");$("#bb").click()}],["Reset galaxy view",()=>$("#zr").click()],["Clear alerts",()=>$("#clr").click()],["Open AI Assistant",()=>$("#cb").click()],["Celebrate 🎉",confetti],...D.map(d=>["Find "+d,()=>{go("galaxy");setTimeout(()=>focus(d),50)}])];}
+let pf=0,pc=[];
+function prender(){const q=$("#pi").value.toLowerCase();pc=CMD.filter(c=>c[0].toLowerCase().includes(q));pf=Math.min(pf,Math.max(0,pc.length-1));$("#pl").innerHTML=pc.map((c,i)=>`<li class="${i===pf?"f":""}" data-i="${i}">${c[0]}</li>`).join("")||"<li>No match</li>";$$("#pl li[data-i]").forEach(l=>l.onclick=()=>prun(+l.dataset.i))}
+function prun(i){const c=pc[i];$("#pal").classList.remove("on");if(c){c[1]();toast(c[0])}}
+document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){e.preventDefault();$("#pal").classList.add("on");$("#pi").value="";pf=0;prender();$("#pi").focus()}
+else if(e.key==="Escape")$("#pal").classList.remove("on");
+else if($("#pal").classList.contains("on")){if(e.key==="ArrowDown"){pf=Math.min(pf+1,pc.length-1);prender()}if(e.key==="ArrowUp"){pf=Math.max(pf-1,0);prender()}if(e.key==="Enter")prun(pf)}});
+$("#pi").oninput=()=>{pf=0;prender()};$("#pal").onclick=e=>{if(e.target.id==="pal")$("#pal").classList.remove("on")};
+$("#q").placeholder="Search node + Enter  (⌘K palette)";
+
+// ---- extra pages ----
+S.saved=[];S.fav=new Set();let favOnly=0;
+function lib(){const q=$("#ls").value.toLowerCase(),f=$("#lf").value,candidates=new Set(candidateDrugs());$("#ll").innerHTML=D.filter(d=>d.toLowerCase().includes(q)&&(f===""||(T[d]?.[0]||[]).includes(+f))&&(!favOnly||S.fav.has(d))).map(d=>{const dp=D.filter(o=>dang(d,o)),conds=(T[d]?.[0]||[]).map(i=>C[i]).filter(Boolean),target=T[d]?.[1]||"Not mapped",klass=T[d]?.[2]||"Clinical medication",relevant=candidates.has(d),badge=relevant?'<span class="ok">✓ Candidate for current patient</span>':'<span style="color:var(--mu)">Not selected by current conditions</span>';return `<div class="tgl" style="gap:10px;flex-wrap:wrap"><div><b>${d}</b> <small style="color:var(--mu)">${klass} · ${conds.join(", ")||"No condition mapping"} · ${target}</small><br><small>${badge} · ${dp.length?'<span class="warn">Avoid with '+dp.join(", ")+'</span>':'<span class="ok">No known dangerous pairs</span>'}</small></div><div class="row"><button class="btn" data-lf="${d}">${S.fav.has(d)?"★":"☆"}</button><button class="btn" data-lg="${d}">View in galaxy</button><button class="btn pri" data-lb="${d}" ${relevant?"":"disabled"}>${relevant?"Add to basket":"Not a candidate"}</button></div></div>`}).join("")||'<p style="color:var(--mu)">No matches</p>';
+$$("[data-lf]").forEach(b=>b.onclick=()=>{const d=b.dataset.lf;S.fav.has(d)?S.fav.delete(d):S.fav.add(d);lib()});
+$$("[data-lg]").forEach(b=>b.onclick=()=>{go("galaxy");setTimeout(()=>focus(b.dataset.lg),60)});
+$$("[data-lb]").forEach(b=>b.onclick=()=>{addB(b.dataset.lb);toast(b.dataset.lb+" added to basket")})}
+$("#ls").oninput=lib;$("#lf").onchange=lib;$("#lfv").onclick=()=>{favOnly^=1;$("#lfv").classList.toggle("pri",favOnly);lib()};
+function mat(){$("#mx").innerHTML=`<table style="border-collapse:separate;border-spacing:4px;font-size:11px"><tr><td></td>${D.map(d=>`<td style="color:var(--mu);text-align:center">${d.slice(0,4)}</td>`).join("")}</tr>${D.map((a,i)=>`<tr><td style="color:var(--mu)">${a}</td>${D.map((b,j)=>`<td><button data-mx="${i},${j}" style="width:34px;height:34px;border-radius:8px;border:0;background:${i===j?"var(--pn2)":dang(a,b)?"#f43f5e":"#22c55e55"};color:#fff">${i===j?"":dang(a,b)?"⚠":"✓"}</button></td>`).join("")}</tr>`).join("")}</table>`;
+$$("[data-mx]").forEach(b=>b.onclick=()=>{const[i,j]=b.dataset.mx.split(",").map(Number),a=D[i],c=D[j];if(i===j)return $("#mi").innerHTML="";const d=dang(a,c);$("#mi").innerHTML=`<b class="${d?"warn":"ok"}">${a} + ${c}: ${d?"DANGEROUS pair":"no known interaction"}</b><button class="btn" data-mp>Add both to basket</button><button class="btn" data-mg>Show in galaxy</button>`;
+$("[data-mp]").onclick=()=>{addB(a);addB(c);toast("Added to basket")};$("[data-mg]").onclick=()=>{go("galaxy");setTimeout(()=>focus(a),60)}})}
+function saveB(){if(!S.basket.length)return;S.saved.push({n:"Regimen "+(S.saved.length+1),d:[...S.basket]});sv();toast("Regimen saved");note("Saved regimen "+S.saved.length)}
+function sv(){$("#sl").innerHTML=S.saved.map((r,i)=>{const bad=r.d.some((x,k)=>r.d.slice(k+1).some(y=>dang(x,y)));return `<div class="tgl" style="gap:10px;flex-wrap:wrap"><div><b>${r.n}</b> ${bad?'<span class="warn">⚠ dangerous</span>':'<span class="ok">✓ safe</span>'}<br><small style="color:var(--mu)">${r.d.join(" + ")}</small></div><div class="row"><button class="btn" data-sl="${i}">Load</button><button class="btn" data-sd="${i}">Delete</button></div></div>`}).join("")||'<p style="color:var(--mu)">Nothing saved yet — build a basket in the galaxy and press “Save regimen”.</p>';
+$$("[data-sl]").forEach(b=>b.onclick=()=>{S.basket=[...S.saved[b.dataset.sl].d];bk();go("galaxy");toast("Loaded into basket")});
+$$("[data-sd]").forEach(b=>b.onclick=()=>{S.saved.splice(b.dataset.sd,1);sv()})}
+$("#svc").onclick=()=>{S.saved=[];sv()};
+lib();mat();sv();
+const _go=go;go=function(v){_go(v);if(v==="library")lib();if(v==="saved")sv()};
+$$(".nav").forEach(b=>b.onclick=()=>go(b.dataset.v));$$("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
+// ---- patient panel ----
+function renderPP(){const p=PT.find(x=>x.n===S.patient)||PT[0];$("#pav").textContent=p.n.split(" ").map(w=>w[0]).join("");$("#pn").textContent=p.n;$("#pid").textContent="Patient ID: "+p.id;
+$("#pkv").innerHTML=[["Age",p.age+" years"],["Sex",p.s],["Data source","Demo patient"]].map(k=>`<div><small>${k[0]}</small><b>${k[1]}</b></div>`).join("");
+$("#pcn").textContent=S.conds.size+" selected";$("#plv").textContent=S.limit+" pills / day";
+$("#pcl").innerHTML=C.map((c,i)=>`<label class="cr"><input type="checkbox" data-pc="${i}" ${S.conds.has(i)?"checked":""}>${c}<span>›</span></label>`).join("");
+$$("[data-pc]").forEach(b=>b.onchange=()=>{b.checked?S.conds.add(+b.dataset.pc):S.conds.delete(+b.dataset.pc);syncC();greset();$("#res").innerHTML=""})}
+const _gr=greset;greset=function(){_gr();renderPP()};
+$("#pmi").onclick=()=>{S.limit=Math.max(1,S.limit-1);syncC();greset();$("#res").innerHTML=""};$("#ppl").onclick=()=>{S.limit=Math.min(8,S.limit+1);syncC();greset();$("#res").innerHTML=""};
+$("#pe").onclick=()=>{const p=PT.find(x=>x.n===S.patient)||PT[0];openPatientForm("edit",p)};
+$("#fv").onclick=()=>{const c=combos().slice(0,4),m=M();$("#res").innerHTML=c.length?`<p style="margin:16px 0 2px"><b>${m}</b> valid regimens · fewest pills first</p>`+c.map((r,i)=>`<div class="rg"><b>${r.length} pills</b><small>${r.join(" + ")}</small><button class="btn" style="margin-top:8px" data-rv="${i}">Show in galaxy</button></div>`).join("")+`<button class="btn" style="width:100%;margin-top:10px" onclick="go('grover')">Verify with Grover search</button>`:'<p class="warn" style="margin-top:16px">No valid regimen for these conditions and pill limit. Raise the limit or remove a condition.</p>';
+$$("[data-rv]").forEach(b=>b.onclick=()=>{S.basket=[...c[b.dataset.rv]];bk();toast("Regimen highlighted in galaxy")});note(m+" valid regimens found for "+S.patient)};
+$("#fs").onclick=()=>{document.fullscreenElement?document.exitFullscreen():$("#gbox").requestFullscreen&&$("#gbox").requestFullscreen()};document.addEventListener("fullscreenchange",()=>setTimeout(size,120));
+// Existing Qure backend bridge — frontend-only update; backend remains unchanged.
+(async function checkBackend(){
+  const el=$("#backend-status");
+  try{
+    const r=await fetch("/api/health",{headers:{"Accept":"application/json"}});
+    const d=await r.json();
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    el.textContent="● Backend: connected";
+    el.style.color="var(--gd)";
+    el.title=(d.service||"Qure")+" "+(d.version||"")+" · existing API";
+  }catch(e){
+    el.textContent="● Backend: offline";
+    el.style.color="var(--rd)";
+    el.title="Open the app through the FastAPI server to use the existing backend APIs.";
+  }
+})();
+
+// init
+renderAl();stats();pts();size();
+loadDrugCatalog().then(()=>loadPatients());
+[["Synthetic dataset loaded"],["Eleanor Morgan profile opened"]].forEach(a=>note(a[0]));
+</script></body></html>

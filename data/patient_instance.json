@@ -1,0 +1,21 @@
+{
+  "name": "Q-SafeRx-DailyMed-10",
+  "source_policy": "Real drug indications and interaction evidence are taken from current/near-current DailyMed labels; the benchmark patient-condition combination is a synthetic optimization instance, not a real patient.",
+  "required_conditions": [
+    "heart_failure",
+    "hypertension",
+    "atrial_fibrillation",
+    "type2_diabetes",
+    "hyperlipidemia",
+    "gastroesophageal_reflux_disease"
+  ],
+  "pill_limit": 6,
+  "hard_interaction_severity": [
+    "high"
+  ],
+  "soft_interaction_severity": [
+    "moderate"
+  ],
+  "objective": "Minimize number of selected drugs while covering all required conditions, avoiding high-severity interactions, and penalizing moderate interactions.",
+  "note": "This is a research benchmark, not a prescribing recommendation."
+}

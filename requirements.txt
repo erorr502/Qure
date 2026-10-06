@@ -1,0 +1,8 @@
+fastapi[standard]>=0.142.2
+httpx>=0.28.1
+numpy>=2.5.3
+pydantic-settings>=2.15.0
+python-dotenv>=1.2.4
+qiskit>=2.5.2
+qiskit-aer>=0.17.2
+sqlalchemy>=2.1.3

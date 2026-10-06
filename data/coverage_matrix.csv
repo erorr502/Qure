@@ -1,0 +1,11 @@
+drug,heart_failure,hypertension,atrial_fibrillation,type2_diabetes,hyperlipidemia,gastroesophageal_reflux_disease
+amiodarone,0,0,0,0,0,0
+digoxin,1,0,1,0,0,0
+warfarin,0,0,1,0,0,0
+atorvastatin,0,0,0,0,1,0
+lisinopril,1,1,0,0,0,0
+amlodipine,0,1,0,0,0,0
+metformin,0,0,0,1,0,0
+omeprazole,0,0,0,0,0,1
+carvedilol,1,1,0,0,0,0
+furosemide,0,1,0,0,0,0
